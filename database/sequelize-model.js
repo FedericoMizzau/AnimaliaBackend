@@ -168,14 +168,56 @@ const controles = sequelize.define(
   }
 );
 
+const detalleControles = sequelize.define(
+  "DetalleControles", 
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false
+    }, 
+    Descripcion: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    Imagen: {
+      type: DataTypes.BLOB,
+      allowNull: true
+    },
+    Controles_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    Tipo: {
+      type: DataTypes.STRING(30),
+      allowNull: true
+    }
+  },
+  {
+    hooks: {
+      beforeValidate: function (detalles, options) {
+        if (typeof detalles.Tipo === "string") {
+          detalles.Tipo = detalles.Tipo.toLowerCase().trim();
+        }
+      },
+    },
+    timestamps: false,
+    sequelize
+  }
+);
+
 propietarios.hasMany(animales);
 animales.belongsTo(propietarios);
 animales.hasMany(controles);
 controles.belongsTo(animales);
+controles.hasMany(detalleControles);
+detalleControles.belongsTo(controles);
 
 module.exports = {
   sequelize,
   propietarios,
   animales,
   controles,
+  detalleControles
 };
